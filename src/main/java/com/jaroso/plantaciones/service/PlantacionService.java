@@ -9,6 +9,7 @@ import com.jaroso.plantaciones.repository.SensorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,19 @@ public class PlantacionService {
                 .stream().map(Sensor::getRegistros)
                 .flatMap(List::stream).toList();
         return registros;
+    }
+
+    //sacar los todos los registros de la plantacion en una fecha su hubiese
+    public List<Registro> registrosEnFecha(Long id, LocalDate fecha){
+        Plantacion plantacion = this.repository.findById(id).orElse(null);
+        //si no existe que cree una nuevo array
+        if (plantacion==null){
+            return new ArrayList<>();
+        }
+        return plantacion.getSensores().stream()
+                .map(sensor -> this.registroRepo.findByRegistroAndFecha(sensor,fecha))
+                .flatMap(List::stream)
+                .toList();
     }
 
 }

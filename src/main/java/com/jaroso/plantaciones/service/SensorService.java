@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,30 +42,31 @@ public class SensorService {
     //sacar los todos los registros del sensor en del sensor su hubiese
     public List<Registro> registros(Long id){
         Sensor sensor = this.sensorRepo.findById(id).orElse(null);
-        //si no existe que cree una nuevo array
+                //si no existe que cree una nuevo array
                 if (sensor==null){
                     return new ArrayList<>();
                 }
-                return sensor.getRegistros();
+    return sensor.getRegistros();
     }
 
 
 
     //registros de un sensor en una fecha concreta
-    public List<Registro> registrosPorFecha(Long id, Date fecha) {
-        Sensor sensor = this.sensorRepo.findById(id).orElse(null);
+    public List<Registro> registrosPorFecha(Long id, LocalDate fecha) {
+    Sensor sensor = this.sensorRepo.findById(id).orElse(null);
+            //si no existe que cree un nuevo array
+            if (sensor == null) {
+                return new ArrayList<>();
+            }
 
-        if (sensor == null) {
-            return new ArrayList<>();
-        }
-
-        return this.registroRepo.findByRegistroAndFecha(sensor,fecha);
+    return this.registroRepo.findByRegistroAndFecha(sensor,fecha);
     }
+
+
+
 
     //Mostrar la temperatura y humedad promedio
     // de un sensor en un rango de fechas, todas las lecturas:
-
-
     public TempHumedadPromedio mediciones(Sensor sensor , LocalDate fechaInicio, LocalDate fechaFin){
         double totalTemperatura=0.0;
         double totalHumedad=0.0;
