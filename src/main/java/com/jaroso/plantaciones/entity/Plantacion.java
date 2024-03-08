@@ -1,13 +1,13 @@
 package com.jaroso.plantaciones.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +26,12 @@ public class Plantacion {
 
     private Double longitud;
 
+    private String tipoCultivo;
+
+    //una plantacion muchos sensores,
+    @OneToMany(mappedBy = "plantacion",fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Sensor> sensores;
 
 
 }
