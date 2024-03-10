@@ -62,7 +62,25 @@ public class SensorService {
     return this.registroRepo.findByRegistroAndFecha(sensor,fecha);
     }
 
+    //Mostrar la temperatura y humedad promedio
+    // de un sensor en un rango de fechas, todas las lecturas:
+    public TempHumedadPromedio medicionesdiaconcreto(Sensor sensor , LocalDate fecha){
+        double totalTemperatura=0.0;
+        double totalHumedad=0.0;
 
+        var registrosSensor = this.registroRepo.findByRegistroAndFechaBetween(sensor,fecha);
+
+        for (Registro registro : registrosSensor) {
+            totalTemperatura += registro.getTemperatura();
+            totalHumedad += registro.getHumedad();
+        }
+
+        int cantidadRegistros = registrosSensor.size();
+        double temperaturaPromedio = totalTemperatura / cantidadRegistros;
+        double humedadPromedio = totalHumedad / cantidadRegistros;
+
+        return new TempHumedadPromedio (temperaturaPromedio,humedadPromedio);
+    }
 
 
     //Mostrar la temperatura y humedad promedio
