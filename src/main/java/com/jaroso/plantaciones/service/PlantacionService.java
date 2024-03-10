@@ -1,5 +1,6 @@
 package com.jaroso.plantaciones.service;
 
+import com.jaroso.plantaciones.dto.TempHumedadPromedio;
 import com.jaroso.plantaciones.entity.Plantacion;
 import com.jaroso.plantaciones.entity.Registro;
 import com.jaroso.plantaciones.entity.Sensor;
@@ -50,20 +51,19 @@ public class PlantacionService {
     }
 
 
-    //sacar los todos los registros de la plantacion su hubiese
+    //find por id los registros de la plantacion su hubiese
     public List<Registro> registros(Long id){
         Plantacion plantacion = this.repository.findById(id).orElse(null);
         //si no existe que cree una nuevo array
         if (plantacion==null){
             return new ArrayList<>();
         }
-        List<Registro>registros=plantacion.getSensores()
+        return plantacion.getSensores()
                 .stream().map(Sensor::getRegistros)
                 .flatMap(List::stream).toList();
-        return registros;
     }
 
-    //sacar los todos los registros de la plantacion en una fecha su hubiese
+    //find por id y fecha concreta
     public List<Registro> registrosEnFecha(Long id, LocalDate fecha){
         Plantacion plantacion = this.repository.findById(id).orElse(null);
         //si no existe que cree una nuevo array
@@ -74,6 +74,28 @@ public class PlantacionService {
                 .map(sensor -> this.registroRepo.findByRegistroAndFecha(sensor,fecha))
                 .flatMap(List::stream)
                 .toList();
+    }
+
+
+    public TempHumedadPromedio medicionesPlantacionFecha(Long id, LocalDate fecha) {
+        double totalTemperatura = 0.0;
+        double totalHumedad = 0.0;
+        List<Registro> registrosSensor = registrosEnFecha(id, fecha); // Asegúrate de que esta función devuelva los registros correctos.
+
+        if (registrosSensor.isEmpty()) {
+            return new TempHumedadPromedio(0.0, 0.0); // Devuelve promedios como 0 si no hay registros.
+        }
+
+        for (Registro registro : registrosSensor) {
+            totalTemperatura += registro.getTemperatura();
+            totalHumedad += registro.getHumedad();
+        }
+
+        int cantidadRegistros = registrosSensor.size();
+        double temperaturaPromedio = totalTemperatura / cantidadRegistros;
+        double humedadPromedio = totalHumedad / cantidadRegistros;
+
+        return new TempHumedadPromedio(temperaturaPromedio, humedadPromedio);
     }
 
 }
