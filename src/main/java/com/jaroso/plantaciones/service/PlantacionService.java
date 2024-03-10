@@ -40,7 +40,7 @@ public class PlantacionService {
 
     public Plantacion save(Plantacion plantacion) {
         return this.repository.save(plantacion);
-    };
+    }
 
     public Optional<Plantacion> findByid(Long id) {
         return this.repository.findById(id);

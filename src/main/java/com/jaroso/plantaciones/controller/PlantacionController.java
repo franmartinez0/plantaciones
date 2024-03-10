@@ -47,11 +47,16 @@ public class PlantacionController {
     //eliminar por id
     @DeleteMapping("/plantaciones/{id}")
     public ResponseEntity<Plantacion>deleteById(@PathVariable Long id){
-        Plantacion plantacion=this.plantacionService.findByid(id).orElse(null);
-        if (plantacion==null) {
+        try {
+            Plantacion plantacion = this.plantacionService.findByid(id).orElse(null);
+            if (plantacion == null) {
+                return ResponseEntity.notFound().build();
+            }
+            this.plantacionService.deleteByid(id);
+            return ResponseEntity.ok().build(); // No es necesario devolver la plantación después de eliminarla.
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(plantacion);
     }
     //mostrar registros de plantacion por id
     @GetMapping("/plantacion/{id}/")
